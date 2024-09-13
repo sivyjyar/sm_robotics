@@ -1,0 +1,19 @@
+ROS2 IRON
+
+необходимо установить: 
+sudo apt install ros-iron-xacro ros-iron-joint-state-publisher-gui
+
+
+1)создаем рабочее пространство 
+
+mkdir dev_ws
+cd dev_ws 
+colcon build --symlink-install 
+  
+2)создаем пакет проекта
+
+cd dev_ws/src
+ros2 pkg create --build-type ament_cmake sm_robotics
+
+и создаем папки в проекте cd ~dev_ws/src/sm_robotics/src
+mkdir description launch config worlds 
