@@ -17,3 +17,19 @@ ros2 pkg create --build-type ament_cmake sm_robotics
 
 и создаем папки в проекте cd ~dev_ws/src/sm_robotics/src
 mkdir description launch config worlds 
+
+чтобы использовать питон, сообщения используемые при навигации, добавляем пакеты в package.xml:
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+3) создаем модель робота
+СДЕЛАТЬ В АВТОКАДЕ НОРМАЛЬНУЮ МОДЕЛЬ + ДОБАВИТЬ ДОБАВИТЬ ИНЕРЦИИ
+
+чтобы папки использовались при построении, добавляем их в CMakeList.txt
+
+install(DIRECTORY launch config description
+ DESTINATION share/${PROJECT_NAME} )
+ 
+ + лаунч и запускаемые файлы должны содержать все разрешения chmod a+rwx test.py
