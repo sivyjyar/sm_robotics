@@ -25,7 +25,6 @@ mkdir description launch config worlds
   <exec_depend>geometry_msgs</exec_depend>
 
 3) создаем модель робота
-СДЕЛАТЬ В АВТОКАДЕ НОРМАЛЬНУЮ МОДЕЛЬ + ДОБАВИТЬ ДОБАВИТЬ ИНЕРЦИИ
 
 чтобы папки использовались при построении, добавляем их в CMakeList.txt
 
@@ -33,3 +32,26 @@ install(DIRECTORY launch config description
  DESTINATION share/${PROJECT_NAME} )
  
  + лаунч и запускаемые файлы должны содержать все разрешения chmod a+rwx test.py
+ 
+ 
+ 4) Для отображения модели в Gazebo необходимо каждому link указать тэг collision и инерцию. Для упрощения расчета инерции используется скрипт.  Для запуска robot_state_publisher и газебо одновременно, создается launch файл, в котором прописывается запуск среды симуляции, спавн робота из формата urdf.
+ 
+ 5) для управления движением используется пакет ros2_control:
+ 
+ sudo apt install ros-iron-ros2-control ros-iron-ros2-controllers ros-iron-gazebo-ros2-control
+ 
+ создаем файл ros2_controll.xacro
+ 
+ 
+ создается два файла. в одном описываются джоинты и как ими будет производиться управление. а так же подключается возможность этого управления в газебо (ros2_control.xacro). В конце делаем укзаание на файл конфигурации контроллеров (ниже)
+ 
+ файл, в котором указываются параметры контроллеров. т.к. мы управляем скоростью, то это будет тип velocity_controllers/JointGroupVelocityController. Прописываем джоинты, которыми они управляют. (controllers.yaml)
+ 
+ запускаются контроллеры в том же launch файле, где и газебо. 
+ 
+     robot_controller_spawner = Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["steering_controller",
+                       "drive_wheel_controller"],
+        )

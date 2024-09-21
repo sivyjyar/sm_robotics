@@ -27,4 +27,9 @@ install(DIRECTORY launch config description
  DESTINATION share/${PROJECT_NAME}
  )
 
+ install(PROGRAMS
+  teleop_to_movement.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()
