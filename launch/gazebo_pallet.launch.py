@@ -88,10 +88,9 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
 
-        # controller_manager,  # - нужно будет подключать при переносе на реального робота(?)
+       ## # controller_manager,  # - нужно будет подключать при переносе на реального робота(?)
 
         joint_state_broadcaster_spawner,
-
         robot_controller_spawner
 
         # steering_spawner,

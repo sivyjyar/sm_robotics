@@ -4,19 +4,71 @@
 <!--    Макрос для расчета инерции простых фигур-->
     <xacro:include filename="inertial_macros.xacro"/>
 
+                     <!-- Параметризация модели -->
+
+<!--    Корпус робота был сделан в Autocad. Куб 100х100х100-->
+
+    <!--Вилы сделаны в автокаде размеры 1000х100х100-->
+
+                            <!--Корпус-->
+    <xacro:property name="L" value="0.57"/>  <!--Длина корпуса-->
+    <xacro:property name="B" value="0.767"/> <!--Ширина корпуса-->
+    <xacro:property name="H" value="0.9"/> <!--Высота корпуса-->
+    <xacro:property name="M" value="100"/> <!--Maсса корпуса-->
+
+                            <!--Опоры-->
+    <xacro:property name="Lo" value="0.1"/> <!--Длина стороны опоры-->
+    <xacro:property name="Ho" value="0.75"/>  <!--Высота опор-->
+    <xacro:property name="Mo" value="5"/> <!--Maсса опоры-->
+
+                        <!--Верхний блок-->
+    <xacro:property name="Lb" value="0.2"/> <!--Длина верхнего блока-->
+    <xacro:property name="Bb" value="0.56"/> <!--Ширина корпуса-->
+    <xacro:property name="Hb" value="0.15"/>  <!--Высота верхнего блока-->
+    <xacro:property name="Mb" value="10"/> <!--Maсса верхнего блока-->
+
+                            <!--Вилы-->
+    <xacro:property name="Lv" value="1.15"/> <!--Длина вил-->
+    <xacro:property name="Bv" value="0.16"/> <!--Ширина вил-->
+    <xacro:property name="Hv" value="0.05"/>  <!--Высота вил-->
+    <xacro:property name="Mv" value="15"/> <!--Maсса вил-->
+
+                        <!--Мотор-колесо УТОЧНИТЬ ШИРИНУ-->
+    <xacro:property name="Dn" value="0.21"/> <!--Диаметр мотор-колеса-->
+    <xacro:property name="Bn" value="0.12"/> <!--Ширина колеса-->
+    <xacro:property name="Ln" value="0.236"/> <!--Отступ мотор-колеса от корпуса-->
+    <xacro:property name="Mn" value="5"/> <!--Maсса мотор-колеса-->
+
+    <!--Привод поворота - формальный блок для работы модели в симуляторе-->
+    <xacro:property name="Dp" value="0.21"/> <!--Диаметр-->
+    <xacro:property name="Lp" value="0.05"/> <!--Длина-->
+    <xacro:property name="Mp" value="1"/> <!--Maсса-->
+
+                        <!--Опорные колеса УТОЧНИТЬ ШИРИНУ-->
+    <xacro:property name="Dk" value="0.08"/> <!--Диаметр-->
+    <xacro:property name="Bk" value="0.08"/> <!--Ширина колеса-->
+    <xacro:property name="Lk" value="1.285"/> <!--Расстояние до мотор-колеса-->
+    <xacro:property name="Bkk" value="0.4"/> <!--Расстояние между колесами-->
+    <xacro:property name="Lkk" value="0.1"/> <!--Отступ между колесами-->
+    <xacro:property name="Mk" value="0.5"/> <!--Maсса верхнего блока-->
+
+<!--    Покраска робота в RViz-->
+    <material name="red">
+        <color rgba="0.77 0 0 1"/>
+    </material>
     <material name="gray">
-        <color rgba="0.66 0.60 0.63 1"/>
+        <color rgba="0.77 0.77 0.77 1"/>
     </material>
 
-    <material name="black">
-        <color rgba="0.41 0.41 0.41 1"/>
-    </material>
-
+                            <!--МОДЕЛЬ-->
 
 
     <!-- BASE LINK -->
     <link name="base_link">
     </link>
+
+
+             <!-- Корпус робота -->
 
     <joint name="body_joint" type="fixed">
         <parent link="base_link"/>
@@ -24,25 +76,25 @@
         <origin xyz="0 0 0"/>
     </joint>
 
-
-                  <!-- Корпус робота -->
     <link name="body_link">
         <visual>
-            <origin xyz="0.2 -0.3 0" rpy=" 0 0 ${pi/2} "/>
+            <origin xyz="${-L/2} ${B/2} 0" rpy=" 0 0 ${-pi/2} "/>
             <geometry>
-                 <mesh filename="file://$(find sm_robotics)/description/meshes/body.stl" scale="0.01 0.01 0.01" />
-<!--                <cylinder radius="0.6" length="1"/>-->
+                 <mesh filename="file://$(find sm_robotics)/description/meshes/pallet_body.stl" scale="${B/100} ${L/100} ${H/100}" />
             </geometry>
-            <material name="gray"/>
+            <material name="red"/>
         </visual>
         <collision>
-            <origin xyz="0 0 0.5" rpy=" 0 0 0 "/>
+<!--            <origin xyz="0 0 ${H/2}" rpy=" 0 0 0 "/>-->
+            <origin xyz="${-L/2} ${B/2} 0" rpy="  0 0 ${-pi/2} "/>
             <geometry>
-                 <box size="0.35 0.56 1"/>
-            </geometry>
+<!--                 <box size="${L} ${B} ${H}"/>-->
+                <mesh filename="file://$(find sm_robotics)/description/meshes/pallet_body.stl" scale="${B/100} ${L/100} ${H/100}" />
+<!--                <box size="0 0 0"/> &lt;!&ndash; для проверки других объектов &ndash;&gt;-->
+            </geometry> <!-- Корпус робота -->
         </collision>
-        <xacro:inertial_box mass="100" x="0.35" y="0.56" z="1">
-            <origin xyz="0.2 -0.3 0" rpy="0 0 ${pi/2}"/>
+        <xacro:inertial_box mass="${M}" x="${L}" y="${B}" z="${H}">
+            <origin xyz="${L/2} ${B/2} ${H/2}" rpy="0 0 ${pi/2}"/>
         </xacro:inertial_box>
     </link>
 
@@ -52,46 +104,52 @@
         <mu2 value="0.001"/>
     </gazebo>
 
-    <!-- WHEELS LINK -->
+
+
+
 
                 <!--Привод поворота-->
 
     <joint name="steering_joint" type="continuous">
         <parent link="base_link"/>
         <child link="steering_link"/>
-        <origin xyz="0.05 0 0.1" rpy="0 0 0"/>
+        <origin xyz="${L/2-Ln} 0 ${Dn/2}" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
     </joint>
 
     <link name="steering_link">
 <!--        пустой объект, без которого не работает модель в газебо-->
         <visual>
-            <origin xyz="0 0 0.15" rpy=" 0 0 0 "/>
+            <origin xyz="0 0 ${Dn/2+0.05}" rpy=" 0 0 0 "/>
             <geometry>
-                <cylinder radius="0.1" length="0.03"/>
+                <cylinder radius="${Dp/2}" length="${Lp}"/>
             </geometry>
-            <material name="black"/>
+            <material name="gray"/>
         </visual>
 
         <collision>
-            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <origin xyz="0 0 ${Dn/2+0.05}" rpy=" 0 0 0 "/>
             <geometry>
-                <cylinder radius="0.01" length="0.01"/>
+                <cylinder radius="${Dp/2}" length="${Lp}"/>
             </geometry>
         </collision>
 
-        <xacro:inertial_cylinder mass="5" length="0.1" radius="0.1">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+        <xacro:inertial_cylinder mass="${Mp}" length="${Lp}" radius="${Dp/2}">
+            <origin xyz="0 0 ${Dn/2+0.05}" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
 
+
+
+
+
+
             <!--    Мотор-колесо-->
+
 
     <joint name="drive_wheel_joint" type="continuous">
         <parent link="steering_link"/>
-<!--        <parent link="base_link"/>-->
         <child link="drive_wheel_link"/>
-<!--         <origin xyz="0.05 0 0.1" rpy="-${pi/2} 0 0"/>-->
         <origin xyz="0 0 0" rpy="-${pi/2} 0 0"/>
         <axis xyz="0 0 1"/>
     </joint>
@@ -101,19 +159,19 @@
         <visual>
             <origin xyz="0 0 0" rpy=" 0 0 0 "/>
             <geometry>
-                <cylinder radius="0.1" length="0.1"/>
+                <cylinder radius="${Dn/2}" length="${Bn}"/>
             </geometry>
-            <material name="black"/>
+            <material name="gray"/>
         </visual>
 
         <collision>
             <origin xyz="0 0 0" rpy=" 0 0 0 "/>
             <geometry>
-                <cylinder radius="0.1" length="0.1"/>
+                <cylinder radius="${Dn/2}" length="${Bn}"/>
             </geometry>
         </collision>
 
-        <xacro:inertial_cylinder mass="5" length="0.1" radius="0.1">
+        <xacro:inertial_cylinder mass="${Mn}" length="${Bn}" radius="${Dn/2}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
@@ -122,133 +180,301 @@
         <material>Gazebo/Orange</material>
     </gazebo>
 
-             <!-- Самонаправляющиеся колеса -->
 
-    <joint name="right_caster_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="right_caster_link"/>
-        <origin xyz="-0.1 -0.1 0.04"/>
+
+
+                        <!--Опоры-->
+
+                    <!--Правая-->
+    <joint name="right_support_joint" type="fixed">
+        <parent link="body_link"/>
+        <child link="right_support_link"/>
+        <origin xyz="-${L/2-Lo/2} ${Bb/2-Lo/2} ${H+Ho/2}" rpy="0 0 0"/>
     </joint>
 
-    <link name="right_caster_link">
+        <link name="right_support_link">
         <visual>
-            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
             <geometry>
-                <sphere radius="0.04"/>
+                <box size="${Lo} ${Lo} ${Ho}" />
             </geometry>
-            <material name="black"/>
+            <material name="gray"/>
         </visual>
+
         <collision>
             <origin xyz="0 0 0" rpy=" 0 0 0 "/>
             <geometry>
-                <sphere radius="0.04"/>
+                 <box size="${Lo} ${Lo} ${Ho}"/>
             </geometry>
         </collision>
-        <xacro:inertial_sphere mass="1"  radius="0.04">
+        <xacro:inertial_box mass="${Mo}" x="${Lo}" y="${Lo}" z="${Ho}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_sphere>
+        </xacro:inertial_box>
     </link>
 
-    <gazebo reference="right_caster_link">
-        <material>Gazebo/Black</material>
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
+                    <!--Левая-->
+    <joint name="left_support_joint" type="fixed">
+        <parent link="body_link"/>
+        <child link="left_support_link"/>
+        <origin xyz="-${L/2-Lo/2} -${Bb/2-Lo/2} ${H+Ho/2}" rpy="0 0 0"/>
+    </joint>
+
+        <link name="left_support_link">
+        <visual>
+            <geometry>
+                <box size="${Lo} ${Lo} ${Ho}" />
+            </geometry>
+            <material name="gray"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                 <box size="${Lo} ${Lo} ${Ho}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${Mo}" x="${Lo}" y="${Lo}" z="${Ho}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+
+
+
+                        <!--Верхний блок-->
+
+    <joint name="top_block_joint" type="fixed">
+        <parent link="body_link"/>
+        <child link="top_block_link"/>
+        <origin xyz="-${L/2-Lb/2} 0 ${H+Ho+Hb/2}" rpy="0 0 0"/>
+    </joint>
+
+        <link name="top_block_link">
+        <visual>
+            <geometry>
+                <box size="${Lb} ${Bb} ${Hb}" />
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                 <box size="${Lb} ${Bb} ${Hb}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${Mb}" x="${Lb}" y="${Bb}" z="${Hb}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <gazebo reference="top_block_link">
+        <material>Gazebo/Red</material>
     </gazebo>
 
 
 
-    <joint name="left_caster_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="left_caster_link"/>
-        <origin xyz="-0.1 0.1 0.04"/>
-    </joint>
-
-    <link name="left_caster_link">
-        <visual>
-            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
-            <geometry>
-                <sphere radius="0.04"/>
-            </geometry>
-            <material name="black"/>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
-            <geometry>
-                <sphere radius="0.04"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_sphere mass="1"  radius="0.04">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_sphere>
-    </link>
-
-    <gazebo reference="left_caster_link">
-        <material>Gazebo/Black</material>
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
-    </gazebo>
 
 
 
-                <!--  Вилы -->
 
-    <joint name="right_fork_joint" type="prismatic">
+
+                     <!--  Вилы -->
+
+                       <!--Справа-->
+
+    <joint name="right_fork_joint" type="fixed">
         <parent link="base_link"/>
         <child link="right_fork_link"/>
-        <origin xyz="-0.45 -0.14 0.03" rpy="0 0 0"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="0" upper="0.5" velocity="100" effort="100"/>
+        <origin xyz="-${L/2} ${Bkk/2+Bv/2} ${Dk/2-Hv/2}" rpy="0 0 -${pi}"/>
     </joint>
 
         <link name="right_fork_link">
         <visual>
             <geometry>
-                <box size="0.6 0.08 0.03" />
+<!--Модель сделана в автокаде размеры 1000х100х100-->
+                <mesh filename="file://$(find sm_robotics)/description/meshes/fork.stl" scale="${Lv/1000} ${Bv/100} ${Hv/100}" />
             </geometry>
-            <material name="black"/>
+            <material name="gray"/>
         </visual>
 
         <collision>
-            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+<!--            <origin xyz="-${L/2+0.5} ${Bkk/2+Bv/2} ${Dk/2-Hv/2}" rpy="0 0 0"/>-->
             <geometry>
-                 <box size="0.6 0.08 0.03"/>
+                <mesh filename="file://$(find sm_robotics)/description/meshes/fork.stl" scale="${Lv/1000} ${Bv/100} ${Hv/100}" />
+<!--                 <box size="${Lv} ${Bv} ${Hv}"/>-->
             </geometry>
         </collision>
-        <xacro:inertial_box mass="4" x="0.6" y="0.08" z="0.03">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+        <xacro:inertial_box mass="${Mv}" x="${Lv}" y="${Bv}" z="${Hv}">
+            <origin xyz="${Lv/2} ${Bv/2} 0" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
 
-
+                <!--Слева-->
     <joint name="left_fork_joint" type="fixed">
         <parent link="right_fork_link"/>
         <child link="left_fork_link"/>
-        <origin xyz="0 0.28 0"/>
+        <origin xyz="0 ${Bkk} 0"/>
     </joint>
 
         <link name="left_fork_link">
         <visual>
             <geometry>
-                <box size="0.6 0.08 0.03" />
+                <mesh filename="file://$(find sm_robotics)/description/meshes/fork.stl" scale="${Lv/1000} ${Bv/100} ${Hv/100}" />
             </geometry>
-            <material name="black"/>
+            <material name="gray"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+<!--            <origin xyz="${Lv/2} ${Bv/2} 0" rpy="0 0 0"/>-->
+            <geometry>
+                <mesh filename="file://$(find sm_robotics)/description/meshes/fork.stl" scale="${Lv/1000} ${Bv/100} ${Hv/100}" />
+                <!--<box size="${Lv} ${Bv} ${Hv}"/>-->
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${Mv}" x="${Lv}" y="${Bv}" z="${Hv}">
+            <origin xyz="${Lv/2} ${Bv/2} 0" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+
+
+
+        <!--Вспомогательные колеса-->
+
+                    <!--Справа-->
+     <joint name="first_right_joint" type="continuous">
+        <parent link="body_link"/>
+        <child link="first_right_link"/>
+        <origin xyz="-${Lk+Ln-L/2+Dk/2-0.01} ${Bkk/2} ${Dk/2}" rpy="${-pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="first_right_link">
+        <visual>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+            <material name="red"/>
         </visual>
 
         <collision>
             <origin xyz="0 0 0" rpy=" 0 0 0 "/>
             <geometry>
-                 <box size="0.6 0.08 0.03"/>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
             </geometry>
         </collision>
-        <xacro:inertial_box mass="4" x="0.6" y="0.08" z="0.03">
+
+        <xacro:inertial_cylinder mass="${Mk}" length="${Bk}" radius="${Dk/2}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_box>
+        </xacro:inertial_cylinder>
     </link>
 
-<!--    "Покраска модели в Gazebo"-->
-<!--    <gazebo refrence="left_fork_link">-->
-<!--        <material>Gazebo/Blue</material>-->
-<!--    </gazebo>-->
+        <joint name="second_right_joint" type="continuous">
+        <parent link="body_link"/>
+        <child link="second_right_link"/>
+        <origin xyz="-${Lk+Ln-L/2-Dk+0.01} ${Bkk/2} ${Dk/2}" rpy="${-pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="second_right_link">
+        <visual>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+        </collision>
+
+        <xacro:inertial_cylinder mass="${Mk}" length="${Bk}" radius="${Dk/2}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+
+                     <!--Слева-->
+     <joint name="first_left_joint" type="continuous">
+        <parent link="body_link"/>
+        <child link="first_left_link"/>
+        <origin xyz="-${Lk+Ln-L/2+Dk/2-0.01} -${Bkk/2} ${Dk/2}" rpy="${-pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="first_left_link">
+        <visual>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+        </collision>
+
+        <xacro:inertial_cylinder mass="${Mk}" length="${Bk}" radius="${Dk/2}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+        <joint name="second_left_joint" type="continuous">
+        <parent link="body_link"/>
+        <child link="second_left_link"/>
+        <origin xyz="-${Lk+Ln-L/2-Dk+0.01} -${Bkk/2} ${Dk/2}" rpy="${-pi/2} 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="second_left_link">
+        <visual>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy=" 0 0 0 "/>
+            <geometry>
+                <cylinder radius="${Dk/2}" length="${Bk}"/>
+            </geometry>
+        </collision>
+
+        <xacro:inertial_cylinder mass="${Mk}" length="${Bk}" radius="${Dk/2}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <gazebo reference="first_right_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+    <gazebo reference="second_right_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <gazebo reference="first_left_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+    <gazebo reference="second_left_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+
+
+
 
 
  </robot>
