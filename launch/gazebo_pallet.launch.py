@@ -57,21 +57,6 @@ def generate_launch_description():
             arguments=["joint_state_broadcaster",
                        "--controller-manager", "/controller_manager"],
         )
-    #
-    # steering_spawner = Node(
-    #         package="controller_manager",
-    #         executable="spawner",
-    #         arguments=["steering_controller",
-    #                    "--controller-manager", "/controller_manager"],
-    #     )
-    #
-    # drive_wheel_spawner = Node(
-    #         package="controller_manager",
-    #         executable="spawner",
-    #         arguments=["drive_wheel_controller",
-    #                    "--controller-manager", "/controller_manager"],
-    #     )
-    #
 
     robot_controller_spawner = Node(
             package="controller_manager",
@@ -79,6 +64,13 @@ def generate_launch_description():
             arguments=["steering_controller",
                        "drive_wheel_controller"],
         )
+
+    # rbk = Node(
+    #         package="controller_manager",
+    #         executable="spawner",
+    #         arguments=["joint_trajectory_controller"],
+    #     )
+
 
 
     # Run the node
@@ -93,6 +85,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         robot_controller_spawner
 
+        # rbk
         # steering_spawner,
         # drive_wheel_spawner,
 

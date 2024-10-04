@@ -28,7 +28,7 @@ install(DIRECTORY launch config description
  )
 
  install(PROGRAMS
-  teleop_to_movement.py
+  teleop_to_movement.py pos_speed_control.py odometry.py coord_movement.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -36,7 +36,7 @@ class TeleopController(Node):
 
         drive_msg = Float64MultiArray()
         drive_msg.data = [linear_velocity]  # Движение мотор-колеса
-        # print(msg.data)
+        print(drive_msg.data, steering_msg.data)
 
         self.steering_publisher.publish(steering_msg)
         self.drive_publisher.publish(drive_msg)
